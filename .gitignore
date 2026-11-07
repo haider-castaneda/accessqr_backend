@@ -1,4 +1,4 @@
 .env
 venv
-____pycache__/
+__pycache__/
 database/usuarios_accessqr.sql
