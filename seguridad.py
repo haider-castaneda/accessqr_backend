@@ -6,6 +6,7 @@ import jwt
 from flask import g, jsonify, request
 
 import config
+from db import consultar_vista
 
 
 def cifrar_contrasena(texto):
@@ -44,10 +45,15 @@ def _proteger(roles_permitidos):
                 return jsonify({'error': 'La sesión venció, inicia sesión de nuevo'}), 401
             except jwt.InvalidTokenError:
                 return jsonify({'error': 'Sesión no válida'}), 401
-            if datos.get('rol') not in roles_permitidos:
+
+            cuenta = consultar_vista('v_administradores', {'id_admin': int(datos['sub'])})
+            if not cuenta or cuenta[0]['estado'] != 'activo':
+                return jsonify({'error': 'Tu cuenta está inactiva o ya no existe'}), 401
+            if cuenta[0]['rol'] not in roles_permitidos:
                 return jsonify({'error': 'No tienes permiso para esta acción'}), 403
+
             g.id_personal = int(datos['sub'])
-            g.rol = datos['rol']
+            g.rol = cuenta[0]['rol']
             return funcion(*args, **kwargs)
         return envoltura
     return decorador
