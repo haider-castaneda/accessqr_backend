@@ -46,3 +46,40 @@ def registro():
         raise ErrorBD('Este documento ya está registrado en el sistema', 409)
 
     return jsonify({'mensaje': MENSAJE_REGISTRO}), 201
+
+def verificar_usuario(datos):
+    documento = campo(datos, 'documento', 20)
+    contrasena = campo(datos, 'contrasena', 200, recortar=False)
+    filas = llamar_procedimiento('sp_obtener_usuario_login', (documento,))
+    if not filas or not verificar_contrasena(contrasena, filas[0]['contrasena_hash']):
+        raise ErrorBD('Documento o contraseña incorrectos', 401)
+    usuario = filas[0]
+    mensajes = {
+        'pendiente': 'Tu cuenta aún está pendiente de aprobación',
+        'rechazado': 'Tu solicitud fue rechazada. Comunícate con un administrador',
+        'inactivo': 'Tu cuenta está inactiva. Comunícate con un administrador',
+    }
+    if usuario['estado'] != 'activo':
+        raise ErrorBD(mensajes[usuario['estado']], 403)
+    return usuario
+
+@bp.route('/mi-qr', methods=['POST'])
+def mi_qr():
+    usuario = verificar_usuario(datos_json())
+    filas = llamar_procedimiento('sp_obtener_token', (usuario['id_usuario'],))
+    if not filas:
+        raise ErrorBD('Tu QR todavía no está disponible', 404)
+    return jsonify({
+        'nombre': usuario['nombre'],
+        'qr': generar_qr_base64(filas[0]['token_qr']),
+    })
+
+@bp.route('/recuperar-qr', methods=['POST'])
+def recuperar_qr():
+    usuario = verificar_usuario(datos_json())
+    token = generar_token()
+    llamar_procedimiento('sp_reponer_qr', (usuario['id_usuario'], token))
+    return jsonify({
+        'nombre': usuario['nombre'],
+        'qr': generar_qr_base64(token),
+    })
