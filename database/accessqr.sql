@@ -26,7 +26,7 @@ DELIMITER $$
 -- Procedimientos
 --
 DROP PROCEDURE IF EXISTS `sp_aprobar_usuario`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_aprobar_usuario` (IN `p_id_usuario` INT, IN `p_token` VARCHAR(250), IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_aprobar_usuario` (IN `p_id_usuario` INT, IN `p_token` VARCHAR(250), IN `p_id_admin` INT)   BEGIN
   IF fn_es_admin(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo un administrador activo puede aprobar usuarios';
   END IF;
@@ -42,7 +42,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_aprobar_usuario` (IN `p_id_usuar
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_cambiar_estado`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cambiar_estado` (IN `p_id_usuario` INT, IN `p_estado` VARCHAR(20), IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_cambiar_estado` (IN `p_id_usuario` INT, IN `p_estado` VARCHAR(20), IN `p_id_admin` INT)   BEGIN
   IF fn_es_admin(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo un administrador activo puede cambiar estados';
   END IF;
@@ -56,7 +56,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cambiar_estado` (IN `p_id_usuari
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_convertir_visitante`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_convertir_visitante` (IN `p_documento` VARCHAR(20), IN `p_nombre` VARCHAR(100), IN `p_tipo_documento` VARCHAR(5), IN `p_telefono` VARCHAR(25), IN `p_contrasena_hash` VARCHAR(250), IN `p_tipo_usuario` VARCHAR(20))   BEGIN
+CREATE  PROCEDURE `sp_convertir_visitante` (IN `p_documento` VARCHAR(20), IN `p_nombre` VARCHAR(100), IN `p_tipo_documento` VARCHAR(5), IN `p_telefono` VARCHAR(25), IN `p_contrasena_hash` VARCHAR(250), IN `p_tipo_usuario` VARCHAR(20))   BEGIN
   DECLARE v_id INT DEFAULT NULL;
   DECLARE v_tipo VARCHAR(20) DEFAULT NULL;
 
@@ -90,7 +90,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_convertir_visitante` (IN `p_docu
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_crear_admin`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_admin` (IN `p_usuario_login` VARCHAR(50), IN `p_hash` VARCHAR(250), IN `p_nombre` VARCHAR(100), IN `p_rol` VARCHAR(20), IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_crear_admin` (IN `p_usuario_login` VARCHAR(50), IN `p_hash` VARCHAR(250), IN `p_nombre` VARCHAR(100), IN `p_rol` VARCHAR(20), IN `p_id_admin` INT)   BEGIN
   IF fn_es_admin(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo un administrador activo puede crear cuentas';
   END IF;
@@ -103,7 +103,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_crear_admin` (IN `p_usuario_logi
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_estado_admin`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_estado_admin` (IN `p_id_objetivo` INT, IN `p_estado` VARCHAR(20), IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_estado_admin` (IN `p_id_objetivo` INT, IN `p_estado` VARCHAR(20), IN `p_id_admin` INT)   BEGIN
   IF fn_es_admin(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo un administrador activo puede cambiar estados';
   END IF;
@@ -121,7 +121,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_estado_admin` (IN `p_id_objetivo
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_historial`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_historial` (IN `p_desde` DATE, IN `p_hasta` DATE, IN `p_documento` VARCHAR(20))   BEGIN
+CREATE  PROCEDURE `sp_historial` (IN `p_desde` DATE, IN `p_hasta` DATE, IN `p_documento` VARCHAR(20))   BEGIN
   SELECT r.id_registro, u.nombre, u.documento, u.tipo_usuario, r.tipo_movimiento, r.fecha_hora
     FROM registros r JOIN usuarios u ON u.id_usuario = r.persona_id
    WHERE r.fecha_hora >= p_desde AND r.fecha_hora < DATE_ADD(p_hasta, INTERVAL 1 DAY)
@@ -130,14 +130,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_historial` (IN `p_desde` DATE, I
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_indicadores`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_indicadores` ()   BEGIN
+CREATE  PROCEDURE `sp_indicadores` ()   BEGIN
   SELECT (SELECT COUNT(*) FROM v_usuarios_dentro) AS personas_dentro,
          (SELECT COUNT(*) FROM usuarios WHERE estado = 'pendiente') AS pendientes,
          (SELECT COUNT(*) FROM registros WHERE fecha_hora >= CURDATE()) AS movimientos_hoy;
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_marcar_revisado`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_marcar_revisado` (IN `p_id_usuario` INT, IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_marcar_revisado` (IN `p_id_usuario` INT, IN `p_id_admin` INT)   BEGIN
   IF fn_es_staff(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Celador o administrador no valido o inactivo';
   END IF;
@@ -148,14 +148,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_marcar_revisado` (IN `p_id_usuar
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_obtener_admin`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_admin` (IN `p_usuario_login` VARCHAR(50))   BEGIN
+CREATE  PROCEDURE `sp_obtener_admin` (IN `p_usuario_login` VARCHAR(50))   BEGIN
   SELECT id_usuario AS id_admin, nombre, tipo_usuario AS rol, estado, contrasena_hash
     FROM usuarios
    WHERE documento = p_usuario_login AND tipo_usuario IN ('administrador','celador');
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_obtener_token`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_token` (IN `p_id_usuario` INT)   BEGIN
+CREATE  PROCEDURE `sp_obtener_token` (IN `p_id_usuario` INT)   BEGIN
   SELECT token_qr
     FROM usuarios
    WHERE id_usuario = p_id_usuario
@@ -165,7 +165,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_token` (IN `p_id_usuario
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_obtener_usuario_login`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_usuario_login` (IN `p_documento` VARCHAR(20))   BEGIN
+CREATE  PROCEDURE `sp_obtener_usuario_login` (IN `p_documento` VARCHAR(20))   BEGIN
   SELECT id_usuario, nombre, tipo_usuario, estado, contrasena_hash
     FROM usuarios
    WHERE documento = p_documento
@@ -173,7 +173,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_usuario_login` (IN `p_do
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_reabrir_usuario`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_reabrir_usuario` (IN `p_id_usuario` INT, IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_reabrir_usuario` (IN `p_id_usuario` INT, IN `p_id_admin` INT)   BEGIN
   IF fn_es_admin(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo un administrador activo puede reabrir usuarios';
   END IF;
@@ -184,7 +184,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_reabrir_usuario` (IN `p_id_usuar
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_rechazar_usuario`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_rechazar_usuario` (IN `p_id_usuario` INT, IN `p_id_admin` INT)   BEGIN
+CREATE  PROCEDURE `sp_rechazar_usuario` (IN `p_id_usuario` INT, IN `p_id_admin` INT)   BEGIN
   IF fn_es_admin(p_id_admin) = 0 THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Solo un administrador activo puede rechazar usuarios';
   END IF;
@@ -195,7 +195,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_rechazar_usuario` (IN `p_id_usua
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_registrar_movimiento`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registrar_movimiento` (IN `p_token_qr` VARCHAR(250))   BEGIN
+CREATE  PROCEDURE `sp_registrar_movimiento` (IN `p_token_qr` VARCHAR(250))   BEGIN
   DECLARE v_id INT DEFAULT NULL;
   DECLARE v_sig VARCHAR(10);
 
@@ -213,7 +213,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registrar_movimiento` (IN `p_tok
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_registrar_usuario`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registrar_usuario` (IN `p_nombre` VARCHAR(100), IN `p_documento` VARCHAR(20), IN `p_tipo_documento` VARCHAR(5), IN `p_telefono` VARCHAR(25), IN `p_contrasena_hash` VARCHAR(250), IN `p_tipo_usuario` VARCHAR(20))   BEGIN
+CREATE  PROCEDURE `sp_registrar_usuario` (IN `p_nombre` VARCHAR(100), IN `p_documento` VARCHAR(20), IN `p_tipo_documento` VARCHAR(5), IN `p_telefono` VARCHAR(25), IN `p_contrasena_hash` VARCHAR(250), IN `p_tipo_usuario` VARCHAR(20))   BEGIN
   IF p_tipo_usuario IS NULL OR p_tipo_usuario IN ('visitante','administrador','celador') THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Tipo de usuario invalido para el registro';
   END IF;
@@ -223,7 +223,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registrar_usuario` (IN `p_nombre
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_registrar_visitante`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registrar_visitante` (IN `p_nombre` VARCHAR(100), IN `p_documento` VARCHAR(20), IN `p_tipo_documento` VARCHAR(5), IN `p_motivo` VARCHAR(100))   BEGIN
+CREATE  PROCEDURE `sp_registrar_visitante` (IN `p_nombre` VARCHAR(100), IN `p_documento` VARCHAR(20), IN `p_tipo_documento` VARCHAR(5), IN `p_motivo` VARCHAR(100))   BEGIN
   DECLARE v_id INT DEFAULT NULL;
   DECLARE v_tipo VARCHAR(20) DEFAULT NULL;
   DECLARE v_sig VARCHAR(10);
@@ -252,7 +252,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registrar_visitante` (IN `p_nomb
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_reponer_qr`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_reponer_qr` (IN `p_id_usuario` INT, IN `p_token` VARCHAR(250))   BEGIN
+CREATE  PROCEDURE `sp_reponer_qr` (IN `p_id_usuario` INT, IN `p_token` VARCHAR(250))   BEGIN
   IF p_token IS NULL OR TRIM(p_token) = '' THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Falta el token_qr generado por la aplicacion';
   END IF;
@@ -266,7 +266,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_reponer_qr` (IN `p_id_usuario` I
 END$$
 
 DROP PROCEDURE IF EXISTS `sp_reporte`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_reporte` (IN `p_desde` DATE, IN `p_hasta` DATE)   BEGIN
+CREATE  PROCEDURE `sp_reporte` (IN `p_desde` DATE, IN `p_hasta` DATE)   BEGIN
   SELECT u.documento, u.nombre, u.tipo_usuario,
          SUM(r.tipo_movimiento = 'entrada') AS entradas,
          SUM(r.tipo_movimiento = 'salida')  AS salidas,
@@ -282,7 +282,7 @@ END$$
 -- Funciones
 --
 DROP FUNCTION IF EXISTS `fn_es_admin`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `fn_es_admin` (`p_id` INT) RETURNS TINYINT(1) READS SQL DATA BEGIN
+CREATE  FUNCTION `fn_es_admin` (`p_id` INT) RETURNS TINYINT(1) READS SQL DATA BEGIN
   DECLARE v INT DEFAULT 0;
   SELECT COUNT(*) INTO v FROM usuarios
    WHERE id_usuario = p_id AND estado = 'activo' AND tipo_usuario = 'administrador';
@@ -290,7 +290,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `fn_es_admin` (`p_id` INT) RETURNS TI
 END$$
 
 DROP FUNCTION IF EXISTS `fn_es_staff`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `fn_es_staff` (`p_id` INT) RETURNS TINYINT(1) READS SQL DATA BEGIN
+CREATE  FUNCTION `fn_es_staff` (`p_id` INT) RETURNS TINYINT(1) READS SQL DATA BEGIN
   DECLARE v INT DEFAULT 0;
   SELECT COUNT(*) INTO v FROM usuarios
    WHERE id_usuario = p_id AND estado = 'activo' AND tipo_usuario IN ('administrador','celador');
@@ -298,7 +298,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `fn_es_staff` (`p_id` INT) RETURNS TI
 END$$
 
 DROP FUNCTION IF EXISTS `fn_siguiente_movimiento`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `fn_siguiente_movimiento` (`p_id_usuario` INT) RETURNS VARCHAR(10) CHARSET utf8mb4 COLLATE utf8mb4_general_ci READS SQL DATA BEGIN
+CREATE  FUNCTION `fn_siguiente_movimiento` (`p_id_usuario` INT) RETURNS VARCHAR(10) CHARSET utf8mb4 COLLATE utf8mb4_general_ci READS SQL DATA BEGIN
   DECLARE v_ultimo VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL;
 
   SELECT tipo_movimiento INTO v_ultimo
@@ -550,7 +550,7 @@ CREATE TABLE `v_usuarios_pendientes` (
 DROP TABLE IF EXISTS `v_administradores`;
 
 DROP VIEW IF EXISTS `v_administradores`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_administradores`  AS SELECT `usuarios`.`id_usuario` AS `id_admin`, `usuarios`.`documento` AS `usuario_login`, `usuarios`.`nombre` AS `nombre`, `usuarios`.`tipo_usuario` AS `rol`, `usuarios`.`estado` AS `estado`, `usuarios`.`fecha_registro` AS `fecha_creacion` FROM `usuarios` WHERE `usuarios`.`tipo_usuario` in ('administrador','celador') ;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER VIEW `v_administradores`  AS SELECT `usuarios`.`id_usuario` AS `id_admin`, `usuarios`.`documento` AS `usuario_login`, `usuarios`.`nombre` AS `nombre`, `usuarios`.`tipo_usuario` AS `rol`, `usuarios`.`estado` AS `estado`, `usuarios`.`fecha_registro` AS `fecha_creacion` FROM `usuarios` WHERE `usuarios`.`tipo_usuario` in ('administrador','celador') ;
 
 -- --------------------------------------------------------
 
@@ -560,7 +560,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `v_usuarios`;
 
 DROP VIEW IF EXISTS `v_usuarios`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_usuarios`  AS SELECT `usuarios`.`id_usuario` AS `id_usuario`, `usuarios`.`nombre` AS `nombre`, `usuarios`.`documento` AS `documento`, `usuarios`.`tipo_documento` AS `tipo_documento`, `usuarios`.`telefono` AS `telefono`, `usuarios`.`tipo_usuario` AS `tipo_usuario`, `usuarios`.`estado` AS `estado`, `usuarios`.`revisado` AS `revisado`, `usuarios`.`motivo_visita` AS `motivo_visita`, `usuarios`.`fecha_registro` AS `fecha_registro` FROM `usuarios` WHERE `usuarios`.`tipo_usuario` not in ('administrador','celador') ;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER VIEW `v_usuarios`  AS SELECT `usuarios`.`id_usuario` AS `id_usuario`, `usuarios`.`nombre` AS `nombre`, `usuarios`.`documento` AS `documento`, `usuarios`.`tipo_documento` AS `tipo_documento`, `usuarios`.`telefono` AS `telefono`, `usuarios`.`tipo_usuario` AS `tipo_usuario`, `usuarios`.`estado` AS `estado`, `usuarios`.`revisado` AS `revisado`, `usuarios`.`motivo_visita` AS `motivo_visita`, `usuarios`.`fecha_registro` AS `fecha_registro` FROM `usuarios` WHERE `usuarios`.`tipo_usuario` not in ('administrador','celador') ;
 
 -- --------------------------------------------------------
 
@@ -570,7 +570,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `v_usuarios_dentro`;
 
 DROP VIEW IF EXISTS `v_usuarios_dentro`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_usuarios_dentro`  AS SELECT `u`.`id_usuario` AS `id_usuario`, `u`.`nombre` AS `nombre`, `u`.`documento` AS `documento`, `u`.`tipo_usuario` AS `tipo_usuario`, `r`.`fecha_hora` AS `hora_ingreso` FROM (`usuarios` `u` join `registros` `r` on(`r`.`persona_id` = `u`.`id_usuario`)) WHERE `r`.`tipo_movimiento` = 'entrada' AND `r`.`id_registro` = (select `r2`.`id_registro` from `registros` `r2` where `r2`.`persona_id` = `u`.`id_usuario` order by `r2`.`fecha_hora` desc,`r2`.`id_registro` desc limit 1) ;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER VIEW `v_usuarios_dentro`  AS SELECT `u`.`id_usuario` AS `id_usuario`, `u`.`nombre` AS `nombre`, `u`.`documento` AS `documento`, `u`.`tipo_usuario` AS `tipo_usuario`, `r`.`fecha_hora` AS `hora_ingreso` FROM (`usuarios` `u` join `registros` `r` on(`r`.`persona_id` = `u`.`id_usuario`)) WHERE `r`.`tipo_movimiento` = 'entrada' AND `r`.`id_registro` = (select `r2`.`id_registro` from `registros` `r2` where `r2`.`persona_id` = `u`.`id_usuario` order by `r2`.`fecha_hora` desc,`r2`.`id_registro` desc limit 1) ;
 
 -- --------------------------------------------------------
 
@@ -580,7 +580,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `v_usuarios_pendientes`;
 
 DROP VIEW IF EXISTS `v_usuarios_pendientes`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_usuarios_pendientes`  AS SELECT `usuarios`.`id_usuario` AS `id_usuario`, `usuarios`.`nombre` AS `nombre`, `usuarios`.`documento` AS `documento`, `usuarios`.`tipo_documento` AS `tipo_documento`, `usuarios`.`telefono` AS `telefono`, `usuarios`.`tipo_usuario` AS `tipo_usuario`, `usuarios`.`revisado` AS `revisado`, `usuarios`.`fecha_registro` AS `fecha_registro` FROM `usuarios` WHERE `usuarios`.`estado` = 'pendiente' ;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER VIEW `v_usuarios_pendientes`  AS SELECT `usuarios`.`id_usuario` AS `id_usuario`, `usuarios`.`nombre` AS `nombre`, `usuarios`.`documento` AS `documento`, `usuarios`.`tipo_documento` AS `tipo_documento`, `usuarios`.`telefono` AS `telefono`, `usuarios`.`tipo_usuario` AS `tipo_usuario`, `usuarios`.`revisado` AS `revisado`, `usuarios`.`fecha_registro` AS `fecha_registro` FROM `usuarios` WHERE `usuarios`.`estado` = 'pendiente' ;
 
 --
 -- Índices para tablas volcadas
