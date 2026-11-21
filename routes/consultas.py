@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint, jsonify, request
 from db import ErrorBD, consultar_vista, llamar_procedimiento
 from routes.utilidades import fecha_param, limpiar
@@ -35,3 +36,17 @@ def historial():
 def reportes():
     desde, hasta = rango_fechas()
     return jsonify(limpiar(llamar_procedimiento('sp_reporte', (desde, hasta))))
+
+@bp.route('/movimientos')
+@requiere_admin
+def movimientos():
+    try:
+        limite = int(request.args.get('limite', 20))
+    except ValueError:
+        raise ErrorBD('El limite debe ser un numero', 400)
+    if limite < 1 or limite > 100:
+        raise ErrorBD('El limite debe estar entre 1 y 100', 400)
+ 
+    hoy = datetime.date.today()
+    filas = llamar_procedimiento('sp_historial', (hoy, hoy, None))
+    return jsonify(limpiar(filas)[:limite])
