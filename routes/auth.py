@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify
 from db import ErrorBD, llamar_procedimiento
 from routes.utilidades import campo, datos_json
 from seguridad import crear_token, verificar_contrasena
+from flask import Blueprint, g, jsonify
+from seguridad import requiere_personal
 
 bp = Blueprint('auth', __name__, url_prefix='/api')
 
@@ -23,4 +25,12 @@ def login():
         'token': crear_token(personal['id_admin'], personal['rol']),
         'rol': personal['rol'],
         'nombre': personal['nombre'],
+    })
+
+@bp.route('/sesion')
+@requiere_personal
+def sesion():
+    return jsonify({
+        'id_personal': g.id_personal,
+        'rol': g.rol,
     })

@@ -1,4 +1,5 @@
-1. Crear la base accessqr vacía.
+1. Crear la base accessqr vacia.
 2. Importar accessqr.sql dentro de esa base.
-3. Importar usuarios_accessqr.sql desde Importar (nivel servidor).
-4. Cambiar la contraseña de accessqr_app y ponerla en el .env.
+3. Copiar usuarios_accessqr.example.sql como usuarios_accessqr.sql,
+   cambiarle la contrasena e importarlo desde Importar (nivel servidor).
+4. Poner esa misma contrasena en DB_PASSWORD del archivo .env.

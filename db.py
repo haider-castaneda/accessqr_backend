@@ -78,11 +78,28 @@ class ErrorBD(Exception):
 def traducir_error(error):
     codigo = error.args[0] if error.args else 0
     mensaje = error.args[1] if len(error.args) > 1 else str(error)
+    texto = str(mensaje).lower()
+ 
     if codigo == 1644:
         return ErrorBD(mensaje, 400)
+ 
     if codigo == 1062:
+        if 'documento' in texto:
+            return ErrorBD('Ese numero de documento ya esta registrado', 409)
+        if 'telefono' in texto:
+            return ErrorBD('Ese telefono ya esta registrado', 409)
+        if 'token_qr' in texto:
+            return ErrorBD('No se pudo generar el QR, intenta de nuevo', 409)
         return ErrorBD('Ya existe un registro con esos datos', 409)
+ 
+    if codigo in (1265, 1366):
+        return ErrorBD('Alguno de los datos no es valido para el sistema', 400)
+    if codigo == 1406:
+        return ErrorBD('Alguno de los datos es demasiado largo', 400)
+ 
     if codigo in (1045, 2002, 2003, 1049):
         return ErrorBD('No se pudo conectar con la base de datos', 500)
+ 
     print('Error de base de datos:', codigo, mensaje)
     return ErrorBD('Error en la base de datos', 500)
+
