@@ -1,6 +1,6 @@
 from flask import Blueprint, g, jsonify
 from db import ErrorBD, consultar_vista, llamar_procedimiento
-from routes.utilidades import campo, datos_json, limpiar, validar_contrasena
+from routes.utilidades import (campo, datos_json, limpiar, validar_contrasena, validar_documento)
 from seguridad import cifrar_contrasena, requiere_admin
 
 bp = Blueprint('administradores', __name__, url_prefix='/api')
@@ -14,7 +14,7 @@ def listar():
 @requiere_admin
 def crear():
     datos = datos_json()
-    usuario_login = campo(datos, 'usuario_login', 50)
+    usuario_login = validar_documento(campo(datos, 'usuario_login', 20))
     nombre = campo(datos, 'nombre', 100)
     rol = campo(datos, 'rol', 20)
     if rol not in ('administrador', 'celador'):
