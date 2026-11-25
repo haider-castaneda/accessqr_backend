@@ -1,5 +1,3 @@
-from flask import Blueprint, jsonify
-from db import consultar_vista, llamar_procedimiento
 from flask import Blueprint, g, jsonify
 from db import consultar_vista, llamar_procedimiento
 from routes.utilidades import (campo, datos_json, limpiar,

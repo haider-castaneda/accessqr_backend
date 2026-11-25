@@ -1,9 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, g, jsonify
 from db import ErrorBD, llamar_procedimiento
 from routes.utilidades import campo, datos_json
-from seguridad import crear_token, verificar_contrasena
-from flask import Blueprint, g, jsonify
-from seguridad import requiere_personal
+from seguridad import crear_token, requiere_personal, verificar_contrasena
 
 bp = Blueprint('auth', __name__, url_prefix='/api')
 
