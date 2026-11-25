@@ -384,16 +384,6 @@ CREATE TABLE `registros` (
 -- Volcado de datos para la tabla `registros`
 --
 
-INSERT INTO `registros` (`id_registro`, `persona_id`, `registrado_por`, `tipo_movimiento`, `fecha_hora`) VALUES
-(3, 10, NULL, 'entrada', '2026-11-12 12:05:03'),
-(4, 8, NULL, 'entrada', '2026-11-19 10:47:19'),
-(5, 8, 9, 'salida', '2026-11-19 11:00:05'),
-(6, 8, 7, 'entrada', '2026-11-21 12:41:12'),
-(7, 8, 7, 'salida', '2026-11-21 12:41:22'),
-(8, 8, 7, 'entrada', '2026-11-21 12:41:34'),
-(9, 8, 9, 'salida', '2026-11-21 14:17:18'),
-(10, 18, 9, 'entrada', '2026-11-21 14:58:30'),
-(11, 18, 9, 'salida', '2026-11-21 14:58:42');
 
 --
 -- Disparadores `registros`
@@ -439,13 +429,14 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id_usuario`, `nombre`, `documento`, `tipo_documento`, `telefono`, `contrasena_hash`, `tipo_usuario`, `token_qr`, `estado`, `fecha_registro`, `motivo_visita`, `revisado`) VALUES
-(7, 'Administrador Principal', '123456789', 'CC', '3001234567', '$2b$12$xtsF3F.Fhse8kBHKqETNyOAmXOkLC87vx2TtMOWzSFLr5FdpTIDpu', 'administrador', NULL, 'activo', '2026-11-12 11:13:09', NULL, 1),
-(8, 'Haider Castaneda', '1070390487', 'TI', '3144460198', '$2b$12$1qaZaKZU87hrtbM0qem35e2rcOrWpm0kTs9SQzV2KAs.gA.39K.Gy', 'aprendiz', '1e9da34effb5657e42d7884d5f032a4c', 'activo', '2026-11-12 11:17:23', NULL, 1),
-(9, 'Carlos Celador', '987654321', 'CC', NULL, '$2b$12$UVzFc2XrxPKglVFsYqTLnu35M.VEfptC45eADarckObp4M8zdt6tS', 'celador', NULL, 'activo', '2026-11-12 11:55:33', NULL, 0),
-(10, 'Laura Mora', '123456780', 'CC', '3101112233', '$2b$12$X2SZWLJ5faPWccWsVAqWjOcH2/SM9NRkETa7d7plp.g8PyUniYGbe', '', 'ea5ad0eac10fcbc1bf208f4be65e5a2e', 'activo', '2026-11-12 11:57:34', NULL, 1),
-(16, 'Franklin sanchez', '1111111111', 'TI', '3154164864', '$2b$12$BBzsEjk37x6r/DXZvaf67uUvQv5hmc3Nugv.h4qKl99zsChu8FKYm', 'aprendiz', NULL, 'pendiente', '2026-11-18 15:55:26', NULL, 0),
-(18, 'Edison Alejandro Lopez Mojica', '1070781002', 'CC', '3173118617', '$2b$12$MtAN.hHAQiAFsikcr7pe/eWHpFwGZgwKksKAL/09g5/fZQxiwtV2q', 'aprendiz', '075b75eeaef509feed761eeb572b1f21', 'activo', '2026-11-21 14:53:34', NULL, 1);
+INSERT INTO `usuarios`
+  (`id_usuario`, `nombre`, `documento`, `tipo_documento`, `telefono`,
+   `contrasena_hash`, `tipo_usuario`, `token_qr`, `estado`,
+   `fecha_registro`, `motivo_visita`, `revisado`)
+VALUES
+  (1, 'Administrador de demostracion', '1070998877', 'CC', NULL,
+   '$2b$12$vPMnEJQsadhthttxqO4mrOYIfHnAmVtHSFc0HSQjDKKJWRoBUyJoW', 'administrador', NULL, 'activo',
+   '2026-11-25 08:00:00', NULL, 0);
 
 --
 -- Disparadores `usuarios`
@@ -671,13 +662,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `registros`
 --
 ALTER TABLE `registros`
-  MODIFY `id_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
